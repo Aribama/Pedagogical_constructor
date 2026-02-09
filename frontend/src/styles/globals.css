@@ -1,0 +1,23 @@
+/* globals.css — базовые стили приложения */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background-color: #f6f8fb; /* нейтральный фон админки */
+}
+
+/* КРИТИЧНО: не ограничиваем ширину root */
+#root {
+  width: 100%;
+  min-height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+  /* никакого центрирования всего приложения */
+  text-align: left;
+}
