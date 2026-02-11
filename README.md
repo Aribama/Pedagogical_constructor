@@ -855,25 +855,6 @@ source venv/bin/activate
 pip install -r requirements.lock.txt
 ```
 
-### Проблема: Ошибка импорта ScenarioPage
-
-**Ошибка:**
-```
-No matching export in "src/pages/ScenarioPage.tsx"
-```
-
-**Решение:**
-
-Откройте `src/app/router.tsx` и измените импорт:
-
-```typescript
-// Было:
-import { ScenarioPage } from "../pages/ScenarioPage";
-
-// Должно быть:
-import ScenarioPage from "../pages/ScenarioPage";
-```
-
 ### Проблема: CORS ошибка
 
 **Ошибка:**
