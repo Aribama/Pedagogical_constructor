@@ -355,6 +355,7 @@ export function ScenarioBottomBar({
 
   return (
     <div
+      className="scenario-ribbon"
       style={{
         position: "fixed",
         left: 16,
@@ -370,6 +371,7 @@ export function ScenarioBottomBar({
     >
       {/* header */}
       <div
+        className="scenario-ribbon-header"
         style={{
           padding: 12,
           borderBottom: "1px solid rgba(0,0,0,0.08)",
@@ -419,7 +421,7 @@ export function ScenarioBottomBar({
           </span>
         </div>
 
-        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
+        <div className="scenario-ribbon-actions" style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
           <span className="small text-muted">{saving ? "сохранение..." : ""}</span>
 
           <button

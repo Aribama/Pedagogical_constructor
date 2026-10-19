@@ -10,7 +10,7 @@ import {
   updateScenario,
 } from "../api/scenarios";
 
-import { getCard, listCards } from "../api/cards";
+import { getCard } from "../api/cards";
 import { generatePlan } from "../api/ai";
 
 import type { TechniqueCard } from "../types/cards";
@@ -80,7 +80,7 @@ function normalizeItems(items?: ScenarioItemRead[] | null): ItemUI[] {
 }
 
 function clampDayTime(v: any): DayTime {
-  if (v === "start" || v === "middle" || v === "end") return v;
+  if (v === "begin" || v === "middle" || v === "end") return v;
   return "middle";
 }
 
@@ -110,7 +110,7 @@ function SortableRow({
   };
 
   const cardTitle = item.card?.title ?? item.title ?? `Карточка #${item.technique_card}`;
-  const dur = item.duration_min ?? (item as any).duration ?? 0;
+  const dur = item.custom_duration_min ?? item.duration_minutes ?? item.card?.duration_min ?? 0;
 
   return (
     <tr ref={setNodeRef} style={style}>
@@ -141,17 +141,17 @@ function SortableRow({
           >
             {cardTitle}
           </button>
-          {item.card?.group_split ? (
+          {item.card?.card_kind === "aux_team_split" ? (
             <span className="badge text-bg-warning" title="Деление на группы">
               Группы
             </span>
           ) : null}
-          {item.card?.warm_up ? (
+          {item.card?.card_kind === "aux_warmup" ? (
             <span className="badge text-bg-info" title="Разогрев">
               Разогрев
             </span>
           ) : null}
-          {item.card?.reflection ? (
+          {item.card?.card_kind === "aux_reflection" ? (
             <span className="badge text-bg-secondary" title="Рефлексия">
               Рефлексия
             </span>
@@ -162,7 +162,7 @@ function SortableRow({
         <span className="text-muted">{durationLabel(dur)}</span>
       </td>
       <td style={{ width: 140 }}>
-        <span className="text-muted">{item.stage ?? "—"}</span>
+        <span className="text-muted">{[item.card?.stage_start && "Начало", item.card?.stage_core && "Основная часть", item.card?.stage_final && "Завершение"].filter(Boolean).join(", ") || "—"}</span>
       </td>
       <td style={{ width: 120, textAlign: "right" }}>
         <button
@@ -234,14 +234,14 @@ export default function ScenarioPage() {
         if (cancelled) return;
         setScenario(s);
 
-        setDraftTitle(normText(s.title ?? ""));
-        setDraftTheme(normText(s.theme ?? ""));
+        setDraftTitle(normText(s.name ?? ""));
+        setDraftTheme(normText(s.note ?? ""));
 
         setDraftProfile({
-          class_num: Number((s as any).class_num ?? 5),
+          class_num: Number(s.grade ?? 5),
           subject: normText((s as any).subject ?? ""),
           goal: normText((s as any).goal ?? ""),
-          group_activity: ((s as any).group_activity ?? "moderate") as any,
+          group_activity: (s.emotionality ?? "moderate") as any,
           day_time: clampDayTime((s as any).day_time),
           group_size: Number((s as any).group_size ?? 0),
           duration_min: Number((s as any).duration_min ?? 45),
@@ -251,7 +251,13 @@ export default function ScenarioPage() {
         setDraftSubjectContent(normText((s as any).subject_content ?? ""));
         setDraftPlan(normText((s as any).plan_text ?? ""));
 
-        setDraftItems(normalizeItems((s as any).items));
+        const items = normalizeItems(s.items);
+        const cards = await Promise.all(items.map(async (item) => {
+          try { return { ...item, card: await getCard(item.technique_card) }; }
+          catch { return item; }
+        }));
+        if (cancelled) return;
+        setDraftItems(cards);
         setDirty(false);
       } catch (e: any) {
         setError(e?.message ?? "Не удалось загрузить сценарий");
@@ -266,18 +272,18 @@ export default function ScenarioPage() {
   }, [scenarioId]);
 
   const totalMinutes = useMemo(() => {
-    return draftItems.reduce((acc, it) => acc + Number(it.duration_min ?? 0), 0);
+    return draftItems.reduce((acc, it) => acc + Number(it.custom_duration_min ?? it.duration_minutes ?? it.card?.duration_min ?? 0), 0);
   }, [draftItems]);
 
   const toPatch = (): ScenarioPatch => {
     const patch: ScenarioPatch = {
-      title: draftTitle,
-      theme: draftTheme,
+      name: draftTitle,
+      note: draftTheme,
 
-      class_num: draftProfile.class_num,
+      grade: draftProfile.class_num,
       subject: draftProfile.subject,
       goal: draftProfile.goal,
-      group_activity: draftProfile.group_activity,
+      emotionality: draftProfile.group_activity,
       day_time: draftProfile.day_time,
       group_size: draftProfile.group_size,
       duration_min: draftProfile.duration_min,
@@ -307,12 +313,9 @@ export default function ScenarioPage() {
 
       // items autosave
       const payloadItems: ScenarioItemPatch[] = draftItems.map((it, idx) => ({
-        id: it.id,
-        scenario: scenario.id,
         technique_card: it.technique_card,
         position: idx + 1,
-        stage: (it as any).stage ?? null,
-        duration_min: (it as any).duration_min ?? 0,
+        custom_duration_min: it.custom_duration_min ?? null,
       }));
       await autosaveScenarioItems(scenario.id, payloadItems);
 
@@ -572,7 +575,7 @@ export default function ScenarioPage() {
                       setDirty(true);
                     }}
                   >
-                    <option value="start">Начало</option>
+                    <option value="begin">Начало</option>
                     <option value="middle">Середина</option>
                     <option value="end">Конец</option>
                   </select>

@@ -35,21 +35,21 @@ export function RegisterPage() {
   return (
     <div>
       <h3 style={{ marginTop: 0 }}>Регистрация</h3>
-      <form onSubmit={onSubmit} className="col">
+      <form onSubmit={onSubmit} className="auth-form">
         <div>
-          <div className="small">Логин</div>
-          <input className="input" value={username} onChange={(e) => setUsername(e.target.value)} />
+          <label className="small" htmlFor="username">Логин</label>
+          <input className="input" required id="username" autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} />
         </div>
         <div>
-          <div className="small">Email</div>
-          <input className="input" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <label className="small" htmlFor="email">Email</label>
+          <input className="input" required id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
         <div>
-          <div className="small">Пароль</div>
-          <input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <label className="small" htmlFor="password">Пароль</label>
+          <input className="input" required id="password" autoComplete="new-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
 
-        {err && <div className="small" style={{ color: "#c62828" }}>{err}</div>}
+        {err && <div role="alert" className="small" style={{ color: "#c62828" }}>{err}</div>}
 
         <button className="btn primary" disabled={busy}>
           {busy ? "Создаём..." : "Создать аккаунт"}

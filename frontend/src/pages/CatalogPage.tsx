@@ -60,6 +60,7 @@ export function CatalogPage() {
   const [cards, setCards] = useState<TechniqueCard[]>([]);
   const [totalAll, setTotalAll] = useState<number>(0);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [selected, setSelected] = useState<TechniqueCard | null>(null);
 
   const addRef = useRef<((cardId: number, title: string) => void) | null>(null);
@@ -99,6 +100,7 @@ export function CatalogPage() {
   useEffect(() => {
     (async () => {
       setLoading(true);
+      setError("");
       try {
         // UI выбранные типы (active/calm/aux)
         const uiSelected = makeUiMethodTypes(query.activity_type);
@@ -113,6 +115,9 @@ export function CatalogPage() {
 
         const fixed = applyMethodTypeFilter(data, uiSelected, methodTypeLogic);
         setCards(fixed);
+      } catch {
+        setError("Не удалось загрузить приёмы. Проверьте соединение и попробуйте ещё раз.");
+        setCards([]);
       } finally {
         setLoading(false);
       }
@@ -135,20 +140,24 @@ export function CatalogPage() {
   ]);
 
   return (
-    <div className="container" style={{ paddingBottom: 120 }}>
-      <div className="row" style={{ alignItems: "flex-start" }}>
-        <div style={{ width: 320 }}>
+    <div className="container catalog-page" style={{ paddingBottom: 180 }}>
+      <div className="catalog-intro"><span className="eyebrow">Библиотека методик</span><h1>Каталог приёмов</h1><p className="page-description">Найдите подход к каждому этапу занятия.</p></div>
+      <div className="catalog-layout">
+        <aside className="catalog-filters">
           <FiltersPanel query={query} onChange={(patch) => setQuery((q) => ({ ...q, ...patch }))} />
-        </div>
+        </aside>
 
-        <div style={{ flex: 1 }} className="col">
-          <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
-            <h3 style={{ margin: 0 }}>Каталог карточек</h3>
+        <div className="catalog-results">
+          <div className="catalog-results-heading">
+            <h2>Педагогические приёмы</h2>
             <span className="small text-muted">
               {loading ? "загрузка..." : `отобрано ${cards.length} из ${totalAll} шт.`}
             </span>
           </div>
 
+          {error && <div className="alert alert-warning" role="alert">{error}</div>}
+          {!loading && !error && cards.length === 0 && <div className="catalog-empty"><h3>Пока ничего не нашлось</h3><p>Измените запрос или сбросьте фильтры.</p></div>}
+          {loading && <div className="catalog-loading" role="status">Подбираем приёмы…</div>}
           <CardGrid
             cards={cards}
             onOpen={(c) => setSelected(c)}

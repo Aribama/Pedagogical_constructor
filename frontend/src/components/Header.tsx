@@ -1,100 +1,33 @@
-import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { ArrowUpRight, Layers2, LogOut, Menu, X } from "lucide-react";
 
-type HeaderProps = {
-  username?: string;
-  onLogout?: () => void;
-};
+type HeaderProps = { username?: string; onLogout?: () => void };
 
 export function Header({ username, onLogout }: HeaderProps) {
+  const [open, setOpen] = useState(false);
   return (
-    <header className="border-bottom bg-white">
-      <div className="container" style={{ maxWidth: 1400 }}>
-        <div className="d-flex align-items-center justify-content-between py-3">
-          {/* Логотип + описание */}
-          <div className="d-flex align-items-center gap-4">
-            <div className="lh-sm">
-              <div style={{ lineHeight: 0.95 }}>
-                <div className="fs-5">
-                  <span className="fw-bold text-primary">КО</span>нструктор
-                </div>
-                <div className="fs-5">
-                  <span className="fw-bold text-primary">ЗА</span>нятий
-                </div>
-              </div>
-              <div className="text-muted small">
-                Сервис педагогического дизайна
-              </div>
-            </div>
-
-            {/* Навигация */}
-            <nav className="d-flex align-items-center gap-3 ms-3">
-              <NavLink
-                to="/"
-                end
-                className={({ isActive }) =>
-                  `text-decoration-none ${
-                    isActive ? "fw-semibold text-primary" : "text-dark"
-                  }`
-                }
-              >
-                Главная
-              </NavLink>
-
-              <NavLink
-                to="/catalog"
-                className={({ isActive }) =>
-                  `text-decoration-none ${
-                    isActive ? "fw-semibold text-primary" : "text-dark"
-                  }`
-                }
-              >
-                Каталог
-              </NavLink>
-
-              <NavLink
-                to="/wiki"
-                className={({ isActive }) =>
-                  `text-decoration-none ${
-                    isActive ? "fw-semibold text-primary" : "text-dark"
-                  }`
-                }
-              >
-                Вики
-              </NavLink>
-
-              <NavLink
-                to="/cabinet"
-                className={({ isActive }) =>
-                  `text-decoration-none ${
-                    isActive ? "fw-semibold text-primary" : "text-dark"
-                  }`
-                }
-              >
-                Мой кабинет
-              </NavLink>
-            </nav>
-          </div>
-
-          {/* Пользователь */}
-          <div className="d-flex align-items-center gap-3">
-            {username ? (
-              <span className="text-muted small">
-                {username}
-              </span>
-            ) : null}
-
-            <button
-              className="btn btn-outline-secondary btn-sm"
-              type="button"
-              onClick={onLogout}
-            >
-              Выйти
-            </button>
-          </div>
+    <header className="app-header">
+      <div className="header-inner">
+        <Link to="/" className="brand" aria-label="Конструктор занятий — главная">
+          <span className="brand-symbol"><Layers2 size={21} strokeWidth={1.7} /></span>
+          <span>Конструктор<span className="brand-caption">Педагогический дизайн</span></span>
+        </Link>
+        <button className="icon-button mobile-menu" aria-label={open ? "Закрыть меню" : "Открыть меню"} aria-expanded={open} aria-controls="main-navigation" onClick={() => setOpen(!open)}>
+          {open ? <X size={21} /> : <Menu size={21} />}
+        </button>
+        <nav id="main-navigation" className={`main-nav ${open ? "is-open" : ""}`} aria-label="Основная навигация">
+          {[["/", "Обзор"], ["/catalog", "Каталог приёмов"], ["/wiki", "База знаний"], ["/cabinet", "Мои занятия"]].map(([to, title]) => (
+            <NavLink key={to} to={to} end={to === "/"} onClick={() => setOpen(false)} className={({ isActive }) => `nav-item ${isActive ? "is-active" : ""}`}>{title}</NavLink>
+          ))}
+        </nav>
+        <div className="header-account">
+          {username && <span className="account-avatar" title={username} aria-label={`Пользователь ${username}`}>{username.slice(0, 1).toUpperCase()}</span>}
+          <button className="icon-button" type="button" onClick={onLogout} aria-label="Выйти из аккаунта" title="Выйти"><LogOut size={18} /></button>
         </div>
       </div>
+      <div className="workspace-strip"><span>Рабочее пространство преподавателя</span><Link to="/scenario">Открыть конструктор <ArrowUpRight size={13} /></Link></div>
     </header>
   );
 }
-
 export default Header;
