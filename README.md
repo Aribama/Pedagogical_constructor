@@ -113,6 +113,46 @@
 
 ---
 
+## Запуск в Docker
+
+Для локального запуска установите и откройте Docker Desktop. В состав окружения входят PostgreSQL 15, Django с Gunicorn и Nginx с собранным интерфейсом.
+
+```bash
+cp .env.example .env
+```
+
+В корневом `.env` замените `SECRET_KEY` и `DATABASE_PASSWORD` случайными значениями. `APP_PORT=8080` задаёт локальный порт.
+
+```bash
+docker compose up --build -d
+docker compose exec backend python manage.py createsuperuser
+```
+
+Приложение: <http://localhost:8080>. Администрирование: <http://localhost:8080/admin/>. Используйте созданную учётную запись для входа. Новая база пустая; карточки можно добавить в админке или командой `create_card`, описанной ниже.
+
+Миграции и сбор статики выполняются при старте backend. Данные PostgreSQL и загруженные файлы хранятся в постоянных Docker volumes и сохраняются при обычной остановке:
+
+```bash
+docker compose down
+docker compose up -d
+```
+
+Проверить состояние и журналы:
+
+```bash
+docker compose ps
+docker compose logs --tail=100 backend
+```
+
+Чтобы получить изменения и пересобрать приложение:
+
+```bash
+git pull --ff-only
+docker compose up --build -d
+```
+
+Порт открыт только на локальном компьютере. Для генерации через внешний ИИ отдельно настройте провайдера в административном разделе. Файл `.env` с секретами не хранится в Git.
+
 ## Установка и запуск
 
 ### 📋 Требования

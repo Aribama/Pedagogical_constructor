@@ -1,0 +1,11 @@
+.venv
+venv
+__pycache__
+**/__pycache__
+*.pyc
+**/*.pyc
+.env
+.env.*
+cookies.txt
+*.sqlite3
+media
