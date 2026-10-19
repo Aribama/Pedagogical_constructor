@@ -4,15 +4,19 @@ import Header from "../../components/Header";
 
 export function AppLayout() {
   const { user, logout } = useAuth();
-
   return (
-    <div>
-      <Header
-        username={user ? `${user.username} (${user.role})` : undefined}
-        onLogout={logout}
-      />
-
-      <Outlet />
+    <div className="app-shell">
+      <a className="skip-link" href="#main-content">
+        Перейти к содержимому
+      </a>
+      <Header username={user?.username} onLogout={logout} />
+      <main id="main-content">
+        <Outlet />
+      </main>
+      <footer className="app-footer">
+        <span>КоЗА · Конструктор занятий</span>
+        <span>Больше времени на главное — обучение.</span>
+      </footer>
     </div>
   );
 }

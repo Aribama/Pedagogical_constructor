@@ -29,17 +29,17 @@ export function LoginPage() {
   return (
     <div>
       <h3 style={{ marginTop: 0 }}>Вход</h3>
-      <form onSubmit={onSubmit} className="col">
+      <form onSubmit={onSubmit} className="auth-form">
         <div>
-          <div className="small">Логин или email</div>
-          <input className="input" value={loginValue} onChange={(e) => setLoginValue(e.target.value)} />
+          <label className="small" htmlFor="login">Логин или email</label>
+          <input className="input" required id="login" autoComplete="username" value={loginValue} onChange={(e) => setLoginValue(e.target.value)} />
         </div>
         <div>
-          <div className="small">Пароль</div>
-          <input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <label className="small" htmlFor="password">Пароль</label>
+          <input className="input" required id="password" autoComplete="current-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
 
-        {err && <div className="small" style={{ color: "#c62828" }}>{err}</div>}
+        {err && <div role="alert" className="small" style={{ color: "#c62828" }}>{err}</div>}
 
         <button className="btn primary" disabled={busy}>
           {busy ? "Входим..." : "Войти"}
