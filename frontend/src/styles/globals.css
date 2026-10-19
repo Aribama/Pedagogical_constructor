@@ -1171,3 +1171,6 @@ input[type="radio"] {
 .catalog-filters .lc-mini:hover {
   border-color: #94a98b;
 }
+
+.brand > span:last-child { font-size: 22px; line-height: 1.1; }
+.brand .brand-caption { margin-top: 5px; letter-spacing: 0; font-weight: 400; }

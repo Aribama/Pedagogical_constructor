@@ -1,14 +1,14 @@
 import { Outlet, Link } from "react-router-dom";
-import { Layers2 } from "lucide-react";
+import { GoatMark } from "../../components/GoatMark";
 
 export function AuthLayout() {
   return (
     <main className="auth-page">
       <div className="auth-intro">
         <span className="brand-symbol">
-          <Layers2 size={24} />
+          <GoatMark />
         </span>
-        <span className="eyebrow">Конструктор занятий</span>
+        <span className="eyebrow">КоЗА · Конструктор занятий</span>
         <h1>
           Хорошее занятие
           <br />
@@ -27,7 +27,7 @@ export function AuthLayout() {
         </div>
         <p className="auth-help">Педагогический дизайн. В вашем ритме.</p>
         <Link className="auth-switch" to="/login">
-          Конструктор занятий
+          КоЗА · Конструктор занятий
         </Link>
       </div>
     </main>

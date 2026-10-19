@@ -1,6 +1,7 @@
+import { GoatMark } from "./GoatMark";
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { ArrowUpRight, Layers2, LogOut, Menu, X } from "lucide-react";
+import { ArrowUpRight, LogOut, Menu, X } from "lucide-react";
 
 type HeaderProps = { username?: string; onLogout?: () => void };
 
@@ -12,14 +13,14 @@ export function Header({ username, onLogout }: HeaderProps) {
         <Link
           to="/"
           className="brand"
-          aria-label="Конструктор занятий — главная"
+          aria-label="КоЗА — конструктор занятий, главная"
         >
           <span className="brand-symbol">
-            <Layers2 size={21} strokeWidth={1.7} />
+            <GoatMark />
           </span>
           <span>
-            Конструктор
-            <span className="brand-caption">Педагогический дизайн</span>
+            КоЗА
+            <span className="brand-caption">Конструктор занятий</span>
           </span>
         </Link>
         <button

@@ -14,7 +14,7 @@ export function AppLayout() {
         <Outlet />
       </main>
       <footer className="app-footer">
-        <span>Конструктор занятий</span>
+        <span>КоЗА · Конструктор занятий</span>
         <span>Больше времени на главное — обучение.</span>
       </footer>
     </div>
